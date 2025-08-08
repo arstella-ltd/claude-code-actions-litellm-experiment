@@ -73,6 +73,7 @@ jobs:
     - name: Run Claude Code
       id: claude
       uses: anthropics/claude-code-action@beta
+      continue-on-error: true
       with:
         anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
         model: ${{ steps.extract_model.outputs.model }}
@@ -112,3 +113,22 @@ jobs:
         echo "Model: ${{ steps.extract_model.outputs.model }}"
         echo "Base URL: ${{vars.ANTHROPIC_BASE_URL}}"
         echo "Small Fast Model: ${{vars.ANTHROPIC_SMALL_FAST_MODEL}}"
+        
+    - name: Fallback Comment on Empty Response
+      if: ${{ failure() || steps.claude.outcome == 'failure' }}
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        issue-number: ${{ github.event.issue.number || github.event.pull_request.number }}
+        body: |
+          ⚠️ **Claude Code Action の実行に問題が発生しました**
+          
+          モデル: `${{ steps.extract_model.outputs.model }}`
+          
+          **考えられる原因:**
+          - LiteLLM プロキシとの互換性問題
+          - モデルのレスポンス形式が期待と異なる
+          - API の一時的な問題
+          
+          **推奨事項:**
+          - Claude 互換モデル（例: `claude-sonnet-4-20250514`）を使用してください
+          - 詳細はワークフローログを確認してください
