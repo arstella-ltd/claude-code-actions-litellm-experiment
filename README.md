@@ -57,14 +57,17 @@ LiteLLM プロキシのレスポンス形式が Claude Code Action の期待す�
 1. **モデルの確認**: Claude 互換モデルを使用しているか確認
 2. **LiteLLM 設定の確認**: 
    ```yaml
-   # LiteLLM config.yaml で streaming を無効化
+   # LiteLLM config.yaml (推奨設定)
    model_list:
      - model_name: your-model
        litellm_params:
          streaming: false
+         timeout: 120
+         drop_params: true
    ```
 3. **API 形式の確認**: LiteLLM が Anthropic API 形式でレスポンスを返すよう設定
 4. **デバッグログの確認**: ワークフローにデバッグステップが含まれている場合は、詳細なログを確認
+5. **Secretsの扱い**: SecretsはGitHub ActionsのSecretsに保存し、Pull Request等で露出しないようにしてください
 
 **既知の制限事項**:
 - 一部の LLM モデルでは、Claude Code Action のツール使用機能が正しく動作しない場合があります
@@ -193,12 +196,12 @@ LiteLLM プロキシのレスポンス形式が Claude Code Action の期待す�
   - Claude Code Action との構造的な非互換性
 - **推奨用途**: 使用不可
 
-#### **gpt-5** - 存在しないモデル
+#### **gpt-5** - 実験環境で非対応/タイムアウト
 - **問題点**:
-  - LiteLLM でタイムアウトエラー
-  - モデル名が架空の可能性
+  - LiteLLM でタイムアウトエラーが発生
+  - 実験環境では未対応または設定が不足している可能性
   - `Error calling litellm.acompletion for non-Anthropic model`
-- **推奨用途**: 使用不可
+- **推奨用途**: 使用不可 (本実験時点)
 
 ### ⚠️ 技術的な問題と対策
 
@@ -206,12 +209,13 @@ LiteLLM プロキシのレスポンス形式が Claude Code Action の期待す�
 **問題**: LiteLLM のレスポンス形式が Claude Code Action の期待と異なる
 **対策**:
 ```yaml
-# LiteLLM config.yaml
+# LiteLLM config.yaml (推奨設定)
 model_list:
   - model_name: your-model
     litellm_params:
       streaming: false  # ストリーミングを無効化
       timeout: 120      # タイムアウトを延長
+      drop_params: true
 ```
 
 #### 2. タスク完了判定の問題
