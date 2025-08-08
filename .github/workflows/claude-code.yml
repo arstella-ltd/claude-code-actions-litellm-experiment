@@ -87,3 +87,28 @@ jobs:
       env:
         ANTHROPIC_BASE_URL: ${{vars.ANTHROPIC_BASE_URL}}
         ANTHROPIC_SMALL_FAST_MODEL: ${{vars.ANTHROPIC_SMALL_FAST_MODEL}}
+        
+    - name: Debug - Check Claude Response
+      if: always()
+      run: |
+        echo "=== Claude Execution Output ==="
+        if [ -f /home/runner/work/_temp/claude-execution-output.json ]; then
+          echo "Raw output:"
+          cat /home/runner/work/_temp/claude-execution-output.json
+          echo ""
+          echo "Formatted output:"
+          cat /home/runner/work/_temp/claude-execution-output.json | jq '.' || true
+          echo ""
+          echo "Response content:"
+          cat /home/runner/work/_temp/claude-execution-output.json | jq '.turns[-1].assistant' || true
+        else
+          echo "Output file not found"
+        fi
+        echo ""
+        echo "=== Step Outputs ==="
+        echo "Claude step output: ${{ steps.claude.outputs.response }}"
+        echo ""
+        echo "=== Environment Variables ==="
+        echo "Model: ${{ steps.extract_model.outputs.model }}"
+        echo "Base URL: ${{vars.ANTHROPIC_BASE_URL}}"
+        echo "Small Fast Model: ${{vars.ANTHROPIC_SMALL_FAST_MODEL}}"
