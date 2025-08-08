@@ -32,12 +32,50 @@ jobs:
       with:
         fetch-depth: 1
 
+    - name: Extract model from comment
+      id: extract_model
+      run: |
+        # コメント内容を取得
+        if [[ "${{ github.event_name }}" == "issue_comment" ]]; then
+          COMMENT="${{ github.event.comment.body }}"
+        elif [[ "${{ github.event_name }}" == "pull_request_review_comment" ]]; then
+          COMMENT="${{ github.event.comment.body }}"
+        elif [[ "${{ github.event_name }}" == "pull_request_review" ]]; then
+          COMMENT="${{ github.event.review.body }}"
+        elif [[ "${{ github.event_name }}" == "issues" ]]; then
+          COMMENT="${{ github.event.issue.body }}"
+        fi
+        
+        # --model オプションを抽出
+        if echo "$COMMENT" | grep -q "@claude --model"; then
+          MODEL=$(echo "$COMMENT" | sed -n 's/.*@claude --model \([^ ]*\).*/\1/p' | head -1)
+          
+          # モデルエイリアスの解決
+          case "$MODEL" in
+            sonnet)
+              RESOLVED_MODEL="claude-sonnet-4-20250514"
+              ;;
+            *)
+              # エイリアスでない場合はそのまま使用
+              RESOLVED_MODEL="$MODEL"
+              ;;
+          esac
+          
+          echo "User specified model: $MODEL"
+          echo "Resolved model: $RESOLVED_MODEL"
+          echo "model=$RESOLVED_MODEL" >> $GITHUB_OUTPUT
+        else
+          # デフォルトモデルを使用
+          echo "Using default model from repository variables"
+          echo "model=${{ vars.MODEL }}" >> $GITHUB_OUTPUT
+        fi
+
     - name: Run Claude Code
       id: claude
       uses: anthropics/claude-code-action@beta
       with:
         anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-        model: ${{vars.MODEL}}
+        model: ${{ steps.extract_model.outputs.model }}
         allowed_tools: |
           mcp__github__create_issue,
           mcp__github__create_pull_request,
