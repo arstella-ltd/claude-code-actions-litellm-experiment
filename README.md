@@ -1,6 +1,17 @@
 # claude-code-actions-litellm-experiment
 ⚡ Claude Code Actions を LiteLLM プロキシで検証するための実験的レポジトリ - API ルーティング、パフォーマンス、互換性のテスト
 
+## 📋 目次
+- [概要](#概要)
+- [クイックスタート](#クイックスタート)
+- [実験結果サマリー](#実験結果サマリー)
+- [Claude Code Actions ワークフローについて](#claude-code-actions-ワークフローについて)
+- [トラブルシューティング](#トラブルシューティング)
+- [詳細な実験結果](#詳細な実験結果)
+- [技術的な問題と対策](#技術的な問題と対策)
+- [推奨事項](#推奨事項)
+- [今後の展望](#今後の展望)
+
 ## 概要
 
 このレポジトリは **Claude Code Actions と LiteLLM プロキシの統合実験**を行うためのテスト環境です。
@@ -12,6 +23,36 @@
 
 ### 📋 実験内容
 7つの異なる LLM モデルを LiteLLM プロキシ経由で Claude Code Actions に接続し、同一タスク（ワークフローのコードレビュー）を実行して比較評価を行いました。
+
+## 🚀 クイックスタート
+
+### 1. 基本設定
+```bash
+# このレポジトリをクローン
+git clone https://github.com/arstella-ltd/claude-code-actions-litellm-experiment.git
+cd claude-code-actions-litellm-experiment
+```
+
+### 2. GitHub Secrets の設定
+- `ANTHROPIC_API_KEY`: あなたの API キー
+- `MODEL`: 使用したいモデル名 (例: `claude-sonnet-4-20250514`)
+- `ANTHROPIC_BASE_URL`: LiteLLM プロキシの URL (例: `https://your-proxy.com/v1`)
+
+### 3. 使用方法
+Issue やプルリクエストで `@claude` とメンションするだけで自動的に応答します。
+
+## 🎯 実験結果サマリー
+
+### 🏆 推奨モデル（実用性順）
+1. **gpt-5-mini** ⭐⭐⭐⭐✨ - 最も詳細で実用的な分析
+2. **glm-4.5** ⭐⭐⭐⭐ - クリーンで高品質な出力
+3. **gpt-oss-120b** ⭐⭐⭐ - 最速実行でコスパ良好
+
+### ❌ 使用不可モデル
+- **qwen3-coder**: 互換性問題（出力トークン0）
+- **kimi-k2**: ツール使用非対応
+- **gpt-5**: 存在しないモデル
+- **gpt-5-nano**: 無限ループ問題
 
 ## Claude Code Actions ワークフローについて
 `.github/workflows/claude-code.yml` では以下の GitHub Actions ワークフローを定義しています：
@@ -70,7 +111,7 @@ LiteLLM プロキシのレスポンス形式が Claude Code Action の期待す�
 - 一部の LLM モデルでは、Claude Code Action のツール使用機能が正しく動作しない場合があります
 - ストリーミングレスポンスは現在サポートされていません
 
-## LiteLLM 統合によるモデル評価結果
+## 📊 詳細な実験結果
 
 ### 📊 モデル性能比較表
 
@@ -200,7 +241,7 @@ LiteLLM プロキシのレスポンス形式が Claude Code Action の期待す�
   - `Error calling litellm.acompletion for non-Anthropic model`
 - **推奨用途**: 使用不可
 
-### ⚠️ 技術的な問題と対策
+## ⚠️ 技術的な問題と対策
 
 #### 1. レスポンス形式の不一致
 **問題**: LiteLLM のレスポンス形式が Claude Code Action の期待と異なる
@@ -226,7 +267,7 @@ model_list:
 **問題**: 一部モデル（kimi-k2）がツール使用をサポートしない
 **対策**: モデル選定時にツール使用サポートを必須要件として確認
 
-### 🎯 推奨事項
+## 🎯 推奨事項
 
 1. **プロダクション環境**: 
    - 第1選択: Claude モデル（claude-sonnet-4-20250514）
@@ -324,7 +365,12 @@ model_list:
 
 ---
 
-**最終更新**: 2025年8月8日
-**実験実施期間**: Issues #4-#10
-**テストモデル数**: 7モデル
-**テスト環境**: LiteLLM プロキシ経由での各種 LLM モデル
+## 📊 実験データ
+
+| 項目 | 詳細 |
+|------|------|
+| **最終更新** | 2025年8月8日 |
+| **実験実施期間** | Issues #4-#10 |
+| **テストモデル数** | 7モデル |
+| **テスト環境** | LiteLLM プロキシ経由での各種 LLM モデル |
+| **実験担当** | Claude Code Actions Team |
