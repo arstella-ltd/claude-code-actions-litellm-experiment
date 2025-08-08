@@ -78,13 +78,21 @@ jobs:
         anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
         model: ${{ steps.extract_model.outputs.model }}
         allowed_tools: |
-          mcp__github__create_issue,
-          mcp__github__create_pull_request,
-          Edit,Replace,View,
+          mcp__*,
+          Edit,
+          MultiEdit,
+          Write,
+          Read,
+          View,
+          Replace,
           Bash,
-          mcp__github__list_workflow_runs,
-          mcp__github__get_workflow_run,
-          mcp__github__get_job_logs
+          TodoWrite,
+          WebFetch,
+          WebSearch,
+          Grep,
+          Glob,
+          LS,
+          NotebookEdit
       env:
         ANTHROPIC_BASE_URL: ${{vars.ANTHROPIC_BASE_URL}}
         ANTHROPIC_SMALL_FAST_MODEL: ${{vars.ANTHROPIC_SMALL_FAST_MODEL}}
