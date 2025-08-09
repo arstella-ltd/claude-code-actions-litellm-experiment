@@ -34,16 +34,22 @@ jobs:
 
     - name: Extract model from comment
       id: extract_model
+      env:
+        EVENT_NAME: ${{ github.event_name }}
+        ISSUE_COMMENT_BODY: ${{ github.event.comment.body }}
+        PR_REVIEW_COMMENT_BODY: ${{ github.event.comment.body }}
+        PR_REVIEW_BODY: ${{ github.event.review.body }}
+        ISSUE_BODY: ${{ github.event.issue.body }}
       run: |
         # コメント内容を取得
-        if [[ "${{ github.event_name }}" == "issue_comment" ]]; then
-          COMMENT="${{ github.event.comment.body }}"
-        elif [[ "${{ github.event_name }}" == "pull_request_review_comment" ]]; then
-          COMMENT="${{ github.event.comment.body }}"
-        elif [[ "${{ github.event_name }}" == "pull_request_review" ]]; then
-          COMMENT="${{ github.event.review.body }}"
-        elif [[ "${{ github.event_name }}" == "issues" ]]; then
-          COMMENT="${{ github.event.issue.body }}"
+        if [[ "$EVENT_NAME" == "issue_comment" ]]; then
+          COMMENT="$ISSUE_COMMENT_BODY"
+        elif [[ "$EVENT_NAME" == "pull_request_review_comment" ]]; then
+          COMMENT="$PR_REVIEW_COMMENT_BODY"
+        elif [[ "$EVENT_NAME" == "pull_request_review" ]]; then
+          COMMENT="$PR_REVIEW_BODY"
+        elif [[ "$EVENT_NAME" == "issues" ]]; then
+          COMMENT="$ISSUE_BODY"
         fi
         
         # --model オプションを抽出
