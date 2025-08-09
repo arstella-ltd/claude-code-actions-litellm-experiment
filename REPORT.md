@@ -119,6 +119,44 @@
 - **測定期間**: 2025年8月9日 02:00-04:30 JST
 - **各モデル**: 同一シナリオを順次実行
 
+### LiteLLM設定
+
+ベンチマークで使用したモデルのLiteLLM設定（config.yaml抜粋）：
+
+```yaml
+model_list:
+  # OpenAI API経由
+  - model_name: gpt-5
+    litellm_params:
+      model: gpt-5
+      
+  # OpenRouter経由
+  - model_name: gpt-oss-120b
+    litellm_params:
+      model: openrouter/openrouter/gpt-oss-120b
+      default_params:
+        reasoning_effort: "high"
+        
+  - model_name: glm-4.5
+    litellm_params:
+      model: openrouter/z-ai/glm-4.5
+      
+  - model_name: gemini-2.5-pro
+    litellm_params:
+      model: openrouter/google/gemini-2.5-pro
+      
+  # Anthropic API経由（エイリアス）
+  - model_name: sonnet
+    litellm_params:
+      model: claude-sonnet-4-20250514
+```
+
+**注記**:
+- `gpt-5`は実際には存在しないモデルのため、タイムアウトエラーが発生
+- `gpt-oss-120b`には`reasoning_effort: "high"`パラメータを設定
+- `sonnet`は`claude-sonnet-4-20250514`のエイリアスとして設定
+- 各モデルはそれぞれ異なるAPIプロバイダー経由でアクセス
+
 ## エグゼクティブサマリー
 
 2025年8月9日実施のClaude Code Actions互換性ベンチマークにおいて、LiteLLMプロキシ経由で5つのモデルを評価。**sonnetモデルのみが実用レベル**に達し、他モデルは重大な欠陥を露呈した。
