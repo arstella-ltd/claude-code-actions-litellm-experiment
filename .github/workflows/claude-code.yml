@@ -55,6 +55,9 @@ jobs:
             sonnet)
               RESOLVED_MODEL="claude-sonnet-4-20250514"
               ;;
+            gpt-oss)
+              RESOLVED_MODEL="gpt-oss-120b"
+              ;;
             *)
               # エイリアスでない場合はそのまま使用
               RESOLVED_MODEL="$MODEL"
